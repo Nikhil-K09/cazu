@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Welcome {{ session['username'] }}</h2>
+    <a href="/book">Book a Service</a> | <a href="/logout">Logout</a>
+    <h3>Your Bookings:</h3>
+    <ul>
+        {% for b in bookings %}
+        <li>
+            {{ b['service'] }} on {{ b['date'] }} at {{ b['time'] }} - 
+            {% if b['accepted'] %}✅ Accepted{% else %}
+            ❌ Pending 
+            <form method="POST" action="/update_booking/{{ b['_id'] }}">
+                <input type="date" name="date" required>
+                <input type="time" name="time" required>
+                <button type="submit">Reschedule</button>
+            </form>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

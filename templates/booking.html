@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Service</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Book a Cleaning Service</h2>
+    <form method="POST">
+        <label>Service:</label>
+        <select name="service">
+            <option value="Foam Wash">Foam Wash</option>
+            <option value="Interior Cleaning">Interior Cleaning</option>
+            <option value="Monthly Package">Monthly Package</option>
+        </select><br>
+        <label>Date:</label>
+        <input type="date" name="date" required><br>
+        <label>Time (9 AM - 5 PM):</label>
+        <input type="time" name="time" min="09:00" max="17:00" required><br>
+        <button type="submit">Book</button>
+    </form>
+</body>
+</html>

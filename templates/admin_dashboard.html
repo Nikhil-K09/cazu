@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Admin Dashboard</h2>
+    <a href="/logout">Logout</a>
+    <ul>
+        {% for b in bookings %}
+        <li>
+            {{ b['username'] }} - {{ b['service'] }} on {{ b['date'] }} at {{ b['time'] }} - 
+            {% if b['accepted'] %}
+                ✅ Accepted
+            {% else %}
+                <form method="POST" action="/accept/{{ b['_id'] }}">
+                    <button type="submit">Accept</button>
+                </form>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
