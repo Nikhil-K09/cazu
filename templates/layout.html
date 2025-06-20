@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CAZU Services</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="CAZU Logo">
+            <h1>CAZU SERVICES</h1>
+        </div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/user_login">User Login</a>
+            <a href="/user_register">Register</a>
+            <a href="/admin_login">Admin Login</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 CAZU Services</p>
+    </footer>
+</body>
+</html>

@@ -1,44 +1,72 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+    font-family: 'Segoe UI', sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 0;
 }
 
 header {
-    background-color: #003366;
-    color: white;
+    background-color: #111;
     padding: 20px;
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #f4c430; /* yellow */
 }
 
-nav {
-    background-color: #004080;
-    padding: 10px;
-    text-align: center;
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-container img {
+    height: 50px;
+    margin-right: 15px;
 }
 
 nav a {
-    color: white;
-    margin: 0 15px;
+    margin: 0 10px;
+    color: #f4c430;
     text-decoration: none;
     font-weight: bold;
 }
 
-form {
-    margin: 20px 0;
+nav a:hover {
+    color: #ffeb3b;
 }
 
-input, select, button {
-    margin: 5px 0;
-    padding: 10px;
+main {
+    padding: 30px;
+    background-color: #2a2a2a;
+}
+
+footer {
+    background-color: #111;
+    color: #888;
+    text-align: center;
+    padding: 15px;
+    position: fixed;
     width: 100%;
-    max-width: 300px;
+    bottom: 0;
+}
+
+input, select, textarea, button {
+    background-color: #333;
+    border: 1px solid #888;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    width: 100%;
 }
 
 button {
-    background-color: #0066cc;
-    color: white;
-    border: none;
+    background-color: #f4c430;
+    color: #000;
     cursor: pointer;
+}
+
+button:hover {
+    background-color: #ffd700;
 }

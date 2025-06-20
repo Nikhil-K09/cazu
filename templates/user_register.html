@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Register</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "layout.html" %}
+
+{% block content %}
     <h2>User Registration</h2>
     <form method="POST">
         <input type="text" name="username" placeholder="Username" required><br>
@@ -12,5 +8,4 @@
         <button type="submit">Register</button>
     </form>
     <p>Already registered? <a href="/user_login">Login</a></p>
-</body>
-</html>
+{% endblock %}

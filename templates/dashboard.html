@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "layout.html" %}
+
+{% block content %}
     <h2>Welcome {{ session['username'] }}</h2>
     <a href="/book">Book a Service</a> | <a href="/logout">Logout</a>
     <h3>Your Bookings:</h3>
@@ -23,5 +19,4 @@
         </li>
         {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}

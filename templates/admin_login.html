@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin Login | CAZU Services</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "layout.html" %}
+
+{% block content %}
     <div class="container">
         <h2>Admin Login</h2>
         <form action="{{ url_for('admin_login') }}" method="POST">
@@ -20,5 +15,4 @@
 
         <p><a href="{{ url_for('index') }}">Back to Home</a></p>
     </div>
-</body>
-</html>
+{% endblock %}
