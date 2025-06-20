@@ -1,22 +1,29 @@
 {% extends "layout.html" %}
-
 {% block content %}
-    <h2>Welcome {{ session['username'] }}</h2>
-    <a href="/book">Book a Service</a> | <a href="/logout">Logout</a>
-    <h3>Your Bookings:</h3>
-    <ul>
-        {% for b in bookings %}
-        <li>
-            {{ b['service'] }} on {{ b['date'] }} at {{ b['time'] }} - 
-            {% if b['accepted'] %}✅ Accepted{% else %}
-            ❌ Pending 
-            <form method="POST" action="/update_booking/{{ b['_id'] }}">
-                <input type="date" name="date" required>
-                <input type="time" name="time" required>
-                <button type="submit">Reschedule</button>
-            </form>
-            {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
+<h2>Welcome {{ session['username'] }}</h2>
+<p>Email: {{ user['email'] }}</p>
+<p>Phone: {{ user['phone'] }}</p>
+<p>Address: {{ user['address'] }}</p>
+
+<a href="/edit_profile">Edit Profile</a> |
+<a href="/book">Book a Service</a> |
+<a href="/logout">Logout</a>
+
+<h3>Your Bookings:</h3>
+<ul>
+    {% for b in bookings %}
+    <li>
+        {{ b['service'] }} on {{ b['date'] }} at {{ b['time'] }}<br>
+        {% if b['accepted'] %}✅ Accepted
+        {% else %}
+        ❌ Pending 
+        <form method="POST" action="/update_booking/{{ b['_id'] }}">
+            <input type="date" name="date" required>
+            <input type="time" name="time" required>
+            <button type="submit">Reschedule</button>
+        </form>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
 {% endblock %}

@@ -1,19 +1,24 @@
-
 {% extends "layout.html" %}
-
 {% block content %}
-    <h2>Book a Cleaning Service</h2>
-    <form method="POST">
-        <label>Service:</label>
-        <select name="service">
-            <option value="Foam Wash">Foam Wash</option>
-            <option value="Interior Cleaning">Interior Cleaning</option>
-            <option value="Monthly Package">Monthly Package</option>
-        </select><br>
-        <label>Date:</label>
-        <input type="date" name="date" required><br>
-        <label>Time (9 AM - 5 PM):</label>
-        <input type="time" name="time" min="09:00" max="17:00" required><br>
-        <button type="submit">Book</button>
-    </form>
+<h2>Book a Service</h2>
+<form method="POST">
+    <label>Service:</label>
+    <select name="service" required>
+        <option value="Foam Wash">Foam Wash</option>
+        <option value="Interior Cleaning">Interior Cleaning</option>
+        <option value="Monthly Package">Monthly Package</option>
+    </select><br><br>
+
+    <label>Date:</label>
+    <input type="date" name="date" required><br>
+    <label>Time:</label>
+    <input type="time" name="time" min="09:00" max="17:00" required><br><br>
+
+    <label>Your Phone:</label>
+    <input type="text" value="{{ phone }}" disabled><br>
+    <label>Your Address:</label>
+    <textarea disabled>{{ address }}</textarea><br>
+
+    <button type="submit">Confirm Booking</button>
+</form>
 {% endblock %}

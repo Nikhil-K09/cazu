@@ -1,7 +1,6 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, render_template, request, redirect, session
 from bson.objectid import ObjectId
 from utils.mongo import users_col, admins_col, bookings_col
-import datetime
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -16,10 +15,19 @@ def index():
 def user_register():
     if request.method == 'POST':
         username = request.form['username']
+        email = request.form['email']
+        phone = request.form['phone']
+        address = request.form['address']
         password = request.form['password']
         if users_col.find_one({'username': username}):
             return "User already exists"
-        users_col.insert_one({'username': username, 'password': password})
+        users_col.insert_one({
+            'username': username,
+            'email': email,
+            'phone': phone,
+            'address': address,
+            'password': password
+        })
         return redirect('/user_login')
     return render_template('user_register.html')
 
@@ -32,7 +40,7 @@ def user_login():
         user = users_col.find_one({'username': username, 'password': password})
         if user:
             session['user_id'] = str(user['_id'])
-            session['username'] = username
+            session['username'] = user['username']
             return redirect('/dashboard')
         return "Invalid credentials"
     return render_template('user_login.html')
@@ -42,28 +50,53 @@ def user_login():
 def dashboard():
     if 'user_id' not in session:
         return redirect('/user_login')
+    user = users_col.find_one({'_id': ObjectId(session['user_id'])})
     bookings = list(bookings_col.find({'user_id': session['user_id']}))
-    return render_template('dashboard.html', bookings=bookings)
+    return render_template('dashboard.html', user=user, bookings=bookings)
+
+# ---- EDIT PROFILE ----
+@app.route('/edit_profile', methods=['GET', 'POST'])
+def edit_profile():
+    if 'user_id' not in session:
+        return redirect('/user_login')
+    user = users_col.find_one({'_id': ObjectId(session['user_id'])})
+    if request.method == 'POST':
+        updated_data = {
+            'username': request.form['username'],
+            'email': request.form['email'],
+            'phone': request.form['phone'],
+            'address': request.form['address'],
+            'password': user['password']  # keep existing password
+        }
+        users_col.update_one({'_id': ObjectId(session['user_id'])}, {'$set': updated_data})
+        session['username'] = updated_data['username']
+        return redirect('/dashboard')
+    return render_template('edit_profile.html', user=user)
 
 # ---- BOOK SERVICE ----
 @app.route('/book', methods=['GET', 'POST'])
 def book():
     if 'user_id' not in session:
         return redirect('/user_login')
+    user = users_col.find_one({'_id': ObjectId(session['user_id'])})
     if request.method == 'POST':
         service = request.form['service']
         date = request.form['date']
         time = request.form['time']
+        address = request.form['address']
         bookings_col.insert_one({
             'user_id': session['user_id'],
-            'username': session['username'],
+            'username': user['username'],
+            'email': user['email'],
+            'phone': user['phone'],
             'service': service,
             'date': date,
             'time': time,
+            'address': address,
             'accepted': False
         })
         return redirect('/dashboard')
-    return render_template('booking.html')
+    return render_template('booking.html', user=user)
 
 # ---- UPDATE BOOKING ----
 @app.route('/update_booking/<id>', methods=['POST'])
@@ -94,7 +127,7 @@ def admin_login():
     return render_template('admin_login.html')
 
 # ---- ADMIN DASHBOARD ----
-@app.route('/admin_dashboard', methods=['GET'])
+@app.route('/admin_dashboard')
 def admin_dashboard():
     if not session.get('admin'):
         return redirect('/admin_login')
@@ -118,6 +151,6 @@ def logout():
     session.clear()
     return redirect('/')
 
-# ---- Run App ----
+# ---- RUN APP ----
 if __name__ == '__main__':
     app.run(debug=True)

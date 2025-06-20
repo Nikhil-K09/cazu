@@ -1,20 +1,22 @@
 {% extends "layout.html" %}
-
 {% block content %}
-    <h2>Admin Dashboard</h2>
-    <a href="/logout">Logout</a>
-    <ul>
-        {% for b in bookings %}
-        <li>
-            {{ b['username'] }} - {{ b['service'] }} on {{ b['date'] }} at {{ b['time'] }} - 
-            {% if b['accepted'] %}
-                ✅ Accepted
-            {% else %}
-                <form method="POST" action="/accept/{{ b['_id'] }}">
-                    <button type="submit">Accept</button>
-                </form>
-            {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
+<h2>Admin Dashboard</h2>
+<ul>
+    {% for b in bookings %}
+    <li>
+        <strong>{{ b['username'] }}</strong> (📧 {{ b['email'] }}, 📞 {{ b['phone'] }})<br>
+        Service: {{ b['service'] }} on {{ b['date'] }} at {{ b['time'] }}<br>
+        Address: {{ b['address'] }}<br>
+        {% if not b['accepted'] %}
+        <form method="POST" action="/accept/{{ b['_id'] }}">
+            <button type="submit">Accept</button>
+        </form>
+        {% else %}
+        ✅ Accepted
+        {% endif %}
+        <hr>
+    </li>
+    {% endfor %}
+</ul>
+<a href="/logout">Logout</a>
 {% endblock %}
