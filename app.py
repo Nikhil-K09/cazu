@@ -78,12 +78,23 @@ def edit_profile():
 def book():
     if 'user_id' not in session:
         return redirect('/user_login')
+    
     user = users_col.find_one({'_id': ObjectId(session['user_id'])})
+
     if request.method == 'POST':
         service = request.form['service']
         date = request.form['date']
         time = request.form['time']
-        address = request.form['address']
+
+        # Use user's stored address or form input
+        address = user.get('address')
+        if not address:
+            address = request.form.get('address', '').strip()
+            if address:  # Save to user's profile
+                users_col.update_one({'_id': user['_id']}, {'$set': {'address': address}})
+        if not address:
+            return "Address is required."
+
         bookings_col.insert_one({
             'user_id': session['user_id'],
             'username': user['username'],
@@ -95,8 +106,11 @@ def book():
             'address': address,
             'accepted': False
         })
+
         return redirect('/dashboard')
+    
     return render_template('booking.html', user=user)
+
 
 # ---- UPDATE BOOKING ----
 @app.route('/update_booking/<id>', methods=['POST'])
