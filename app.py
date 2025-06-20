@@ -35,15 +35,25 @@ def user_register():
 @app.route('/user_login', methods=['GET', 'POST'])
 def user_login():
     if request.method == 'POST':
-        username = request.form['username']
+        identifier = request.form['identifier']
         password = request.form['password']
-        user = users_col.find_one({'username': username, 'password': password})
+
+        # Check for email OR phone
+        user = users_col.find_one({
+            '$and': [
+                {'$or': [{'email': identifier}, {'phone': identifier}]},
+                {'password': password}
+            ]
+        })
+
         if user:
             session['user_id'] = str(user['_id'])
             session['username'] = user['username']
             return redirect('/dashboard')
         return "Invalid credentials"
+
     return render_template('user_login.html')
+
 
 # ---- USER DASHBOARD ----
 @app.route('/dashboard')
@@ -145,8 +155,27 @@ def admin_login():
 def admin_dashboard():
     if not session.get('admin'):
         return redirect('/admin_login')
-    bookings = list(bookings_col.find())
+
+    # Get all bookings with user details
+    bookings = []
+    for b in bookings_col.find():
+        user = users_col.find_one({'_id': ObjectId(b['user_id'])})
+        booking = {
+            '_id': str(b['_id']),
+            'service': b.get('service'),
+            'date': b.get('date'),
+            'time': b.get('time'),
+            'accepted': b.get('accepted', False),
+            'completed': b.get('completed', False),
+            'username': user.get('username', 'Unknown') if user else 'Unknown',
+            'phone': user.get('phone', 'N/A') if user else 'N/A',
+            'email': user.get('email', 'N/A') if user else 'N/A',
+            'address': user.get('address', 'Not Provided') if user else 'Not Provided'
+        }
+        bookings.append(booking)
+
     return render_template('admin_dashboard.html', bookings=bookings)
+
 
 # ---- ACCEPT BOOKING ----
 @app.route('/accept/<id>', methods=['POST'])
@@ -156,6 +185,16 @@ def accept(id):
     bookings_col.update_one(
         {'_id': ObjectId(id)},
         {'$set': {'accepted': True}}
+    )
+    return redirect('/admin_dashboard')
+@app.route('/complete/<id>', methods=['POST'])
+def complete(id):
+    if not session.get('admin'):
+        return redirect('/admin_login')
+    
+    bookings_col.update_one(
+        {'_id': ObjectId(id)},
+        {'$set': {'completed': True}}
     )
     return redirect('/admin_dashboard')
 
