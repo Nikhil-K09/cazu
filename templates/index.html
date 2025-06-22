@@ -1,7 +1,70 @@
-
-
 {% extends "layout.html" %}
 
 {% block content %}
-    
+<div class="hero-section">
+    <h2>Welcome to CAZU Services</h2>
+    <p>Book doorstep car & bike cleaning services in a few clicks.</p>
+</div>
+
+<div class="services-section">
+    <h3>Our Services</h3>
+    <ul class="service-grid-static">
+        <li>Single wash</li>
+        <li>Monthly packages</li>
+        <li>Car foam wash</li>
+        <li>Exterior cleaning</li>
+        <li>Interior cleaning</li>
+        <li>Car vaccuming</li>
+        <li>Car tyre polish</li>
+        <li>Bike foam wash</li>
+    </ul>
+</div>
+
+
+<div class="center-btn">
+    <button class="open-modal-btn" onclick="openModal()">Book Service</button>
+</div>
+
+<!-- Modal Popup -->
+<div id="bookingModal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h3>Select Services</h3>
+        <form method="POST" action="/quick_book">
+            <div class="service-grid">
+                {% for s in ["Single wash", "Monthly packages", "Car foam wash", "Exterior cleaning", 
+                            "Interior cleaning", "Car vacuuming", "Car tyre polish", "Bike foam wash"] %}
+                    <label class="service-item">
+                        {{ s }}
+                        <input type="checkbox" name="services" value="{{ s }}">
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div class="form-row">
+                <label>Date:</label>
+                <input type="date" name="date" required>
+            </div>
+
+            <div class="form-row">
+                <label>Time:</label>
+                <input type="time" name="time" min="09:00" max="17:00" required>
+            </div>
+
+            <div class="form-row">
+                <button type="submit">Proceed to Book</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal() {
+        document.getElementById("bookingModal").classList.remove("hidden");
+    }
+
+    function closeModal() {
+        document.getElementById("bookingModal").classList.add("hidden");
+    }
+</script>
 {% endblock %}

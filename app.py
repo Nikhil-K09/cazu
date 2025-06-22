@@ -175,7 +175,32 @@ def admin_dashboard():
         bookings.append(booking)
 
     return render_template('admin_dashboard.html', bookings=bookings)
+# Home page booking
+@app.route('/quick_book', methods=['POST'])
+def quick_book():
+    if 'user_id' not in session:
+        return redirect('/user_login')
+    
+    services = request.form.getlist('services')
+    date = request.form['date']
+    time = request.form['time']
+    user = users_col.find_one({'_id': ObjectId(session['user_id'])})
 
+    if not user.get('address'):
+        return redirect('/edit_profile')  # Force user to add address first
+
+    bookings_col.insert_one({
+        'user_id': session['user_id'],
+        'username': session['username'],
+        'services': services,
+        'date': date,
+        'time': time,
+        'address': user.get('address'),
+        'phone': user.get('phone'),
+        'accepted': False,
+        'completed': False
+    })
+    return redirect('/dashboard')
 
 # ---- ACCEPT BOOKING ----
 @app.route('/accept/<id>', methods=['POST'])
