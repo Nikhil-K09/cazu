@@ -187,12 +187,15 @@ def quick_book():
     time = request.form['time']
     user = users_col.find_one({'_id': ObjectId(session['user_id'])})
 
+    if not services:
+        return "Please select at least one service."
+
     if not user.get('address'):
-        return redirect('/edit_profile')  # Force user to add address first
+        return redirect('/edit_profile')
 
     bookings_col.insert_one({
         'user_id': session['user_id'],
-        'username': session['username'],
+        'username': user['username'],
         'services': services,
         'date': date,
         'time': time,
@@ -202,6 +205,7 @@ def quick_book():
         'completed': False
     })
     return redirect('/dashboard')
+
 
 # ---- ACCEPT BOOKING ----
 @app.route('/accept/<id>', methods=['POST'])
