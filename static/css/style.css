@@ -12,7 +12,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 3px solid #f4c430; /* yellow */
+    border-bottom: 3px solid #f4c430;
 }
 
 .logo-container {
@@ -67,12 +67,17 @@ button {
     background-color: #f4c430;
     color: #000;
     cursor: pointer;
+    border: none;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 10px 20px;
 }
 
 button:hover {
     background-color: #ffd700;
 }
-/* Booking Page Styling */
+
+/* Hero Section */
 .hero-section {
     text-align: center;
     padding: 30px 20px;
@@ -81,6 +86,7 @@ button:hover {
     border-bottom: 2px solid #ffcc00;
 }
 
+/* Booking Form */
 .booking-form {
     max-width: 600px;
     margin: 40px auto;
@@ -103,31 +109,6 @@ button:hover {
     cursor: pointer;
 }
 
-.service-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #2a2a2a;
-    border-radius: 8px;
-}
-
-.service-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: #333;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    user-select: none;
-}
-
-.service-item:hover {
-    background-color: #444;
-}
-
 .form-row {
     margin-bottom: 16px;
 }
@@ -142,25 +123,7 @@ input[type="time"] {
     width: fit-content;
 }
 
-button[type="submit"] {
-    padding: 10px 20px;
-    background-color: #ffcc00;
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-button[type="submit"]:hover {
-    background-color: #ffe44d;
-}
-
-/* Hidden class to toggle services */
-.hidden {
-    
-    display: none;
-}
+/* Centered Book Service Button */
 .center-btn {
     display: flex;
     justify-content: center;
@@ -183,9 +146,8 @@ button[type="submit"]:hover {
     background-color: #e6b800;
 }
 
-
+/* Book Service Button */
 .open-modal-btn {
-    
     background-color: #ffcc00;
     border: none;
     border-radius: 8px;
@@ -215,7 +177,6 @@ button[type="submit"]:hover {
     justify-content: center;
 }
 
-
 .modal-content {
     background-color: #1c1c1c;
     padding: 30px;
@@ -241,6 +202,33 @@ button[type="submit"]:hover {
     cursor: pointer;
 }
 
+/* Grid of Services inside Modal */
+.service-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.service-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #333;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.service-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    margin-right: 10px;
+}
+
+/* Static Display of Services */
 .services-section {
     max-width: 900px;
     margin: 40px auto;
@@ -256,7 +244,7 @@ button[type="submit"]:hover {
 
 .service-grid-static {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 in a row */
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     list-style: none;
     padding: 0;
@@ -270,15 +258,18 @@ button[type="submit"]:hover {
     font-size: 1.1rem;
     font-weight: 500;
     border-radius: 10px;
-    white-space: nowrap;         /* Keeps text in 1 line */
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;     /* In case text overflows */
+    text-overflow: ellipsis;
     box-shadow: 0 0 8px rgba(255, 255, 0, 0.15);
     transition: background 0.2s ease;
 }
 
+.service-grid-static li:hover {
+    background-color: #333;
+}
 
-
+/* Hidden Utility */
 .hidden {
     display: none;
 }

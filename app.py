@@ -175,6 +175,7 @@ def admin_dashboard():
         bookings.append(booking)
 
     return render_template('admin_dashboard.html', bookings=bookings)
+
 # Home page booking
 @app.route('/quick_book', methods=['POST'])
 def quick_book():

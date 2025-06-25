@@ -35,7 +35,7 @@
                 {% for s in ["Single wash", "Monthly packages", "Car foam wash", "Exterior cleaning", 
                             "Interior cleaning", "Car vacuuming", "Car tyre polish", "Bike foam wash"] %}
                     <label class="service-item">
-                        {{ s }}
+                        <span class="service-name">{{ s }}</span>
                         <input type="checkbox" name="services" value="{{ s }}">
                     </label>
                 {% endfor %}
