@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Edit Profile</h2>
+<form method="POST">
+    <label>Full Name:</label>
+    <input type="text" name="username" value="{{ user['username'] }}" required><br>
+    <label>Email:</label>
+    <input type="email" name="email" value="{{ user['email'] }}" required><br>
+    <label>Phone:</label>
+    <input type="text" name="phone" value="{{ user['phone'] }}" required><br>
+    <label>Address:</label>
+    <textarea name="address" required>{{ user['address'] }}</textarea><br>
+    <button type="submit">Save Changes</button>
+</form>
+{% endblock %}

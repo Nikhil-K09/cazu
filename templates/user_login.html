@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>User Login</h2>
+<form method="POST">
+    <label>Email or Phone:</label>
+    <input type="text" name="identifier" required><br><br>
+    
+    <label>Password:</label>
+    <input type="password" name="password" required><br><br>
+
+    <button type="submit">Login</button>
+</form>
+{% endblock %}

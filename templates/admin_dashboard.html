@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+<ul>
+    {% for b in bookings %}
+<li>
+    <strong>{{ b['username'] }}</strong> - {{ b['service'] }}<br>
+    {{ b['date'] }} at {{ b['time'] }}<br>
+    📍 {{ b['address'] }}<br>
+    📞 {{ b['phone'] }}<br>
+    {% if b['accepted'] %}✅ Accepted{% else %}
+        <form method="POST" action="/accept/{{ b['_id'] }}">
+            <button type="submit">Accept</button>
+        </form>
+    {% endif %}
+
+    {% if b['accepted'] %}
+        {% if b.get('completed') %}
+            ✅ Job Done
+        {% else %}
+            <form method="POST" action="/complete/{{ b['_id'] }}">
+                <button type="submit">Mark as Done</button>
+            </form>
+        {% endif %}
+    {% endif %}
+    <hr>
+</li>
+{% endfor %}
+</ul>
+<a href="/logout">Logout</a>
+{% endblock %}
