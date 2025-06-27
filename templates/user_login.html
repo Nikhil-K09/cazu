@@ -3,11 +3,16 @@
 <h2>User Login</h2>
 <form method="POST">
     <label>Email or Phone:</label>
-    <input type="text" name="identifier" required><br><br>
+    <input type="text" name="identifier" required><br>
     
     <label>Password:</label>
-    <input type="password" name="password" required><br><br>
-
+    <input type="password" name="password" required><br>
+    
     <button type="submit">Login</button>
 </form>
+
+<p>Don't have an account? <a href="/user_register">Register here</a></p>
+
+<hr>
+<p><strong>Admin?</strong> <a href="/admin_login">Login as Admin</a></p>
 {% endblock %}
