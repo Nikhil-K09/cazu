@@ -95,6 +95,66 @@ button:hover {
     margin-bottom: 20px;
     color: #ffcc00;
 }
+.bookings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.booking-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2a2a2a;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+}
+
+.booking-info {
+    flex: 1;
+}
+.reschedule-form form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.reschedule-form input[type="date"],
+.reschedule-form input[type="time"] {
+    background-color: #222;
+    border: 1px solid #555;
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: #fff;
+    width: auto;
+}
+
+.reschedule-form button {
+    background-color: #ffcc00;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.reschedule-form button:hover {
+    background-color: #e6b800;
+}
+
+.reschedule-form .delete-btn {
+    background-color: #e60000;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.reschedule-form .delete-btn:hover {
+    background-color: #ff4d4d;
+}
 
 .form-group label {
     font-weight: bold;
@@ -273,7 +333,6 @@ button[type="submit"]:hover {
     white-space: nowrap;         /* Keeps text in 1 line */
     overflow: hidden;
     text-overflow: ellipsis;     /* In case text overflows */
-    box-shadow: 0 0 8px rgba(255, 255, 0, 0.15);
     transition: background 0.2s ease;
 }
 

@@ -1,31 +1,32 @@
 {% extends "layout.html" %}
 {% block content %}
 <h2>Admin Dashboard</h2>
-<ul>
-    {% for b in bookings %}
-<li>
-    <strong>{{ b['username'] }}</strong> - {{ b['service'] }}<br>
-    {{ b['date'] }} at {{ b['time'] }}<br>
-    📍 {{ b['address'] }}<br>
-    📞 {{ b['phone'] }}<br>
-    {% if b['accepted'] %}✅ Accepted{% else %}
-        <form method="POST" action="/accept/{{ b['_id'] }}">
-            <button type="submit">Accept</button>
-        </form>
-    {% endif %}
 
-    {% if b['accepted'] %}
-        {% if b.get('completed') %}
-            ✅ Job Done
-        {% else %}
-            <form method="POST" action="/complete/{{ b['_id'] }}">
-                <button type="submit">Mark as Done</button>
-            </form>
-        {% endif %}
-    {% endif %}
-    <hr>
-</li>
-{% endfor %}
-</ul>
-<a href="/logout">Logout</a>
+<h3>All Bookings:</h3>
+<div class="bookings-container">
+    {% for b in bookings %}
+    <div class="booking-box">
+        <p><strong>{{ b['service'] }}</strong> for {{ b['username'] }} on {{ b['date'] }} at {{ b['time'] }}</p>
+        <p>Phone: {{ b['phone'] }} | Email: {{ b['email'] }} | Address: {{ b['address'] }}</p>
+        <p>
+            {% if b['accepted'] %}
+                ✅ Accepted
+            {% else %}
+                ❌ Pending
+                <form method="POST" action="/accept/{{ b['_id'] }}" style="display:inline;">
+                    <button type="submit">Accept</button>
+                </form>
+            {% endif %}
+            
+            {% if b['completed'] %}
+                🏁 Completed
+            {% elif b['accepted'] %}
+                <form method="POST" action="/complete/{{ b['_id'] }}" style="display:inline;">
+                    <button type="submit">Mark Complete</button>
+                </form>
+            {% endif %}
+        </p>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

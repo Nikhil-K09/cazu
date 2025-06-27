@@ -1,27 +1,98 @@
 {% extends "layout.html" %}
 {% block content %}
 <h2>Welcome {{ session['username'] }}</h2>
-<p>Email: {{ user['email'] }}</p>
-<p>Phone: {{ user['phone'] }}</p>
-<p>Address: {{ user['address'] }}</p>
 
-<a href="/book">Book a Service</a>
+<div class="center-btn">
+    <button class="open-modal-btn" onclick="openBookingModal()">Book a Service</button>
+</div>
 
 <h3>Your Bookings:</h3>
-<ul>
-    {% for b in bookings %}
-    <li>
-        {{ b['service'] }} on {{ b['date'] }} at {{ b['time'] }}<br>
-        {% if b['accepted'] %}✅ Accepted
-        {% else %}
-        ❌ Pending 
-        <form method="POST" action="/update_booking/{{ b['_id'] }}">
-            <input type="date" name="date" required>
-            <input type="time" name="time" required>
-            <button type="submit">Reschedule</button>
+<div class="bookings-container">
+    {% if bookings %}
+        {% for b in bookings %}
+        <div class="booking-box">
+            <div class="booking-info">
+                <p>
+                    <strong>
+                        {% if b.get('service') %}
+                            {{ b['service'] }}
+                        {% elif b.get('services') %}
+                            {{ b['services'] | join(', ') }}
+                        {% else %}
+                            Unknown Service
+                        {% endif %}
+                    </strong>
+                    on {{ b['date'] }} at {{ b['time'] }}
+                </p>
+                <p>
+                    {% if b['accepted'] %}
+                        ✅ Accepted
+                    {% else %}
+                        ❌ Pending
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="reschedule-form">
+                {% if not b['accepted'] %}
+                <form method="POST" action="/update_booking/{{ b['_id'] }}">
+                    <input type="date" name="date" required>
+                    <input type="time" name="time" required>
+                    <button type="submit">Reschedule</button>
+                </form>
+                {% endif %}
+                
+                <!-- Delete button -->
+                <form method="POST" action="/delete_booking/{{ b['_id'] }}" onsubmit="return confirm('Are you sure you want to delete this booking?');">
+                    <button type="submit" class="delete-btn">Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No bookings found.</p>
+    {% endif %}
+</div>
+
+<!-- Booking modal (same popup you used on home page) -->
+<div id="bookingModal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close" onclick="closeBookingModal()">&times;</span>
+        <h3>Select Services</h3>
+        <form method="POST" action="/quick_book">
+            <div class="service-grid">
+                {% for s in ["Single wash", "Monthly packages", "Car foam wash", "Exterior cleaning", 
+                            "Interior cleaning", "Car vacuuming", "Car tyre polish", "Bike foam wash"] %}
+                    <label class="service-item">
+                        <span class="service-name">{{ s }}</span>
+                        <input type="checkbox" name="services" value="{{ s }}">
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div class="form-row">
+                <label>Date:</label>
+                <input type="date" name="date" required>
+            </div>
+
+            <div class="form-row">
+                <label>Time:</label>
+                <input type="time" name="time" min="09:00" max="17:00" required>
+            </div>
+
+            <div class="form-row">
+                <button type="submit">Proceed to Book</button>
+            </div>
         </form>
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
+    </div>
+</div>
+
+<script>
+function openBookingModal() {
+    document.getElementById('bookingModal').classList.remove('hidden');
+}
+function closeBookingModal() {
+    document.getElementById('bookingModal').classList.add('hidden');
+}
+</script>
 {% endblock %}
