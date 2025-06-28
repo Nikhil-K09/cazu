@@ -5,70 +5,42 @@
     <title>CAZU Services</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: #333;
-            min-width: 150px;
-            box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
-            z-index: 1;
-        }
-        .dropdown-content a {
-            color: #f4c430;
-            padding: 10px 12px;
-            text-decoration: none;
-            display: block;
-        }
-        .dropdown-content a:hover {
-            background-color: #444;
-        }
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-        .dropdown span {
-            cursor: pointer;
-            color: #f4c430;
-            font-weight: bold;
-        }
-    </style>
+
 </head>
 <body>
     <header>
         <div class="logo-container">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="CAZU Logo">
         </div>
-            <nav>
-                <a href="/">Home</a>
-
-                {% if session.get('user_id') %}
-                    <a href="/dashboard">Dashboard</a>
-                    <div class="dropdown">
-                        <span>{{ session['username'] }}</span>
-                        <div class="dropdown-content">
-                            <a href="/edit_profile">Edit Profile</a>
-                            <a href="/logout">Logout</a>
-                        </div>
-                    </div>
+        <nav>
+            <a href="/">Home</a>
+            
+            {% if session.get('user_id') %}
+                <a href="/dashboard">Dashboard</a>
                 
-                {% elif session.get('admin') %}
-                    <a href="/admin_dashboard">Dashboard</a>
-                    <div class="dropdown">
-                        <span>{{ session.get('admin_name', 'Admin') }}</span>
-                        <div class="dropdown-content">
-                            <a href="/logout">Logout</a>
-                        </div>
+                <div class="dropdown">
+                    <span class="dropdown-trigger">{{ session['username'] }}</span>
+                    <div class="dropdown-content">
+                        <a href="/edit_profile" class="dropdown-text">Edit Profile</a>
+                        <a href="/logout" class="dropdown-text">Logout</a>
                     </div>
+                </div>
 
-                {% else %}
-                    <a href="/user_login">Login</a>
-                {% endif %}
-            </nav>
+            {% elif session.get('admin') %}
+                <a href="/admin_dashboard">Dashboard</a>
+
+                <div class="dropdown">
+                    <span class="dropdown-trigger">{{ session.get('admin_name', 'Admin') }}</span>
+                    <div class="dropdown-content">
+                        <a href="/logout" class="dropdown-text">Logout</a>
+                    </div>
+                </div>
+
+            {% else %}
+                <a href="/user_login">Login</a>
+            {% endif %}
+        </nav>
+
 
     </header>
 

@@ -14,6 +14,40 @@ header {
     align-items: center;
     border-bottom: 3px solid #f4c430; /* yellow */
 }
+.center-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #222;  /* dark theme */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.edit-profile-form input {
+    width: calc(100% - 12px);  /* ensures equal left/right padding inside input */
+    padding: 6px;
+    margin: 6px 0 12px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    background-color: #333;
+    color: #fff;
+    box-sizing: border-box;  /* ensures padding is included in width */
+}
+
+.edit-profile-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #ffc107;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.edit-profile-form button:hover {
+    background-color: #ffca28;
+}
+
 
 .logo-container {
     display: flex;
@@ -25,6 +59,66 @@ header {
     width: 100px;
     margin-right: 15px;
 }
+
+.login-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #222;  /* dark background for dark theme */
+    border-radius: 8px;
+    border: 1px solid #e6b800;
+    color: #fff;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-form label {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.login-form input {
+    padding: 10px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 4px;
+    background-color: #333;
+    color: #fff;
+    width: 100%;
+    box-sizing: border-box;  /* ensures padding fits inside width */
+}
+
+.login-form button {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #ffcc00;
+    border: none;
+    border-radius: 4px;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+}
+
+.login-form button:hover {
+    background-color: #e6b800;
+}
+
+.login-link, .admin-login {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.login-separator {
+    margin: 15px 0;
+    border: 0;
+    border-top: 1px solid #555;
+}
+
+
 
 nav a {
     margin: 0 10px;
@@ -108,7 +202,7 @@ button:hover {
     background-color: #2a2a2a;
     padding: 15px 20px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+    box-shadow: 0 0 10px rgba(208, 208, 208, 0.2);
 }
 
 .booking-info {
@@ -147,7 +241,7 @@ button:hover {
     background-color: #e60000;
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 10px 5px;
     border-radius: 4px;
     cursor: pointer;
 }
@@ -283,7 +377,7 @@ button[type="submit"]:hover {
     width: 90%;
     max-width: 600px;
     color: #fff;
-    box-shadow: 0 0 30px rgba(255, 255, 0, 0.3);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
     position: relative;
 }
 
@@ -291,7 +385,18 @@ button[type="submit"]:hover {
     color: #ffcc00;
     margin-top: 0;
 }
+nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;  /* spacing between Home, Dashboard, username/admin name */
+    margin-right:35px;
+}
 
+nav a {
+    text-decoration: none;
+    color: #ffcc00; /* or your brand color */
+    font-weight: bold;
+}
 .close {
     position: absolute;
     top: 12px;
@@ -300,7 +405,41 @@ button[type="submit"]:hover {
     color: #ffcc00;
     cursor: pointer;
 }
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;  /* directly below the trigger */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    min-width: 120px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 1;
+    border-radius: 4px;
+    
+}
 
+.dropdown-content a {
+    color: #f4c430;
+    padding:7px ;
+    text-decoration: none;
+    display: block;
+}
+.dropdown-content a:hover {
+    background-color: #444;
+}
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+.dropdown span {
+    cursor: pointer;
+    color: #f4c430;
+    font-weight: bold;
+}
 .services-section {
     max-width: 900px;
     margin: 40px auto;
