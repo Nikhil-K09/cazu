@@ -131,6 +131,7 @@ def book():
         return redirect('/dashboard')
 
     return render_template('booking.html', user=user)
+    
 @app.route('/quick_book', methods=['POST'])
 def quick_book():
     if 'user_id' not in session:
