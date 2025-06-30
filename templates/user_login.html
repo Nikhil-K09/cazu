@@ -4,10 +4,14 @@
     <h2>Login</h2>
     <form method="POST" class="login-form">
         <label for="identifier">Email or Phone:</label>
-        <input type="text" id="identifier" name="identifier" required>
+        <input type="text" id="identifier" name="identifier" value="{{ request.form.identifier }}" required>
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
+
+        {% if error %}
+            <p style="color: red; margin-top: 5px;">{{ error }}</p>
+        {% endif %}
 
         <button type="submit">Login</button>
     </form>

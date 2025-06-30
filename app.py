@@ -34,6 +34,7 @@ def user_register():
 # ---- USER LOGIN ----
 @app.route('/user_login', methods=['GET', 'POST'])
 def user_login():
+    error = None  # initialize error as None
     if request.method == 'POST':
         identifier = request.form['identifier']
         password = request.form['password']
@@ -62,9 +63,11 @@ def user_login():
             session['admin_name'] = admin['username']
             return redirect('/admin_dashboard')
 
-        return "Invalid credentials"
+        # If neither user nor admin matched
+        error = "Invalid credentials"
 
-    return render_template('user_login.html')
+    return render_template('user_login.html', error=error)
+
 
 
 # ---- USER DASHBOARD ----
@@ -131,7 +134,7 @@ def book():
         return redirect('/dashboard')
 
     return render_template('booking.html', user=user)
-    
+
 @app.route('/quick_book', methods=['POST'])
 def quick_book():
     if 'user_id' not in session:
