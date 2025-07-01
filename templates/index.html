@@ -32,13 +32,13 @@
         <h3>Select Services</h3>
         <form method="POST" action="/quick_book">
             <div class="service-grid">
-                {% for s in ["Single wash", "Monthly packages", "Car foam wash", "Exterior cleaning", 
-                            "Interior cleaning", "Car vacuuming", "Car tyre polish", "Bike foam wash"] %}
+                {% for s in services %}
                     <label class="service-item">
-                        {{ s }}
-                        <input type="checkbox" name="services" value="{{ s }}">
+                        <input type="checkbox" name="services" value="{{ s['name'] }}" onchange="toggleHighlight(this)">
+                        <span class="service-name">{{ s['name'] }} - ₹{{ s['price'] }} ({{ s['duration'] }} hr)</span>
                     </label>
                 {% endfor %}
+
             </div>
 
             <div class="form-row">

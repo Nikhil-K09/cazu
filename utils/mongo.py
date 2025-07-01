@@ -12,3 +12,4 @@ db = client["cazu_services"]  # Replace with your actual DB name if different
 users_col = db["users"]
 admins_col = db["admins"]
 bookings_col = db["bookings"]
+services_col=db["services"]

@@ -195,15 +195,7 @@ button:hover {
     gap: 20px;
 }
 
-.booking-box {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #2a2a2a;
-    padding: 15px 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(208, 208, 208, 0.2);
-}
+
 
 .booking-info {
     flex: 1;
@@ -267,16 +259,46 @@ button:hover {
     border-radius: 8px;
 }
 
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.reschedule-form {
+    margin-top: 5px;
+}
+
+.reschedule-form.hidden {
+    display: none;
+}
+
 .service-item {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: #333;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    user-select: none;
+    flex-direction: column;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background: #222;
+    color: #fff;
+    transition: background 0.3s, border 0.3s;
 }
+
+.service-item.highlight {
+    background: #ffcc00;
+    color: #000;
+    border-color: #e6b800;
+}
+
+.booking-box {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background: #222;
+}
+
 
 .service-item:hover {
     background-color: #444;

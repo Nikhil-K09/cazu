@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+
 {% block content %}
 <h2>Welcome {{ session['username'] }}</h2>
 
@@ -33,18 +34,20 @@
                 </p>
             </div>
 
-            <div class="reschedule-form">
+            <div class="action-buttons">
                 {% if not b['accepted'] %}
+                    <button type="button" onclick="toggleReschedule('{{ b['_id'] }}')" class="reschedule-btn">Reschedule</button>
+                {% endif %}
+                <form method="POST" action="/delete_booking/{{ b['_id'] }}" onsubmit="return confirm('Are you sure you want to delete this booking?');">
+                    <button type="submit" class="delete-btn">Delete</button>
+                </form>
+            </div>
+
+            <div id="reschedule-{{ b['_id'] }}" class="reschedule-form hidden">
                 <form method="POST" action="/update_booking/{{ b['_id'] }}">
                     <input type="date" name="date" required>
                     <input type="time" name="time" required>
-                    <button type="submit">Reschedule</button>
-                </form>
-                {% endif %}
-                
-                <!-- Delete button -->
-                <form method="POST" action="/delete_booking/{{ b['_id'] }}" onsubmit="return confirm('Are you sure you want to delete this booking?');">
-                    <button type="submit" class="delete-btn">Delete</button>
+                    <button type="submit">Save</button>
                 </form>
             </div>
         </div>
@@ -54,18 +57,18 @@
     {% endif %}
 </div>
 
-<!-- Booking modal (same popup you used on home page) -->
+<!-- Booking Modal -->
 <div id="bookingModal" class="modal hidden">
     <div class="modal-content">
         <span class="close" onclick="closeBookingModal()">&times;</span>
         <h3>Select Services</h3>
         <form method="POST" action="/quick_book">
             <div class="service-grid">
-                {% for s in ["Single wash", "Monthly packages", "Car foam wash", "Exterior cleaning", 
-                            "Interior cleaning", "Car vacuuming", "Car tyre polish", "Bike foam wash"] %}
+                {% for s in services %}
                     <label class="service-item">
-                        <span class="service-name">{{ s }}</span>
-                        <input type="checkbox" name="services" value="{{ s }}">
+                        <span class="service-name">{{ s.name }}</span>
+                        <input type="checkbox" name="services" value="{{ s.name }}" onchange="toggleHighlight(this)">
+                        <span class="price-info">₹{{ s.price }} / {{ s.duration }} hr</span>
                     </label>
                 {% endfor %}
             </div>
@@ -93,6 +96,17 @@ function openBookingModal() {
 }
 function closeBookingModal() {
     document.getElementById('bookingModal').classList.add('hidden');
+}
+function toggleReschedule(id) {
+    const el = document.getElementById('reschedule-' + id);
+    el.classList.toggle('hidden');
+}
+function toggleHighlight(checkbox) {
+    if (checkbox.checked) {
+        checkbox.closest('.service-item').classList.add('highlight');
+    } else {
+        checkbox.closest('.service-item').classList.remove('highlight');
+    }
 }
 </script>
 {% endblock %}
