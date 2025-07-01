@@ -74,7 +74,7 @@ def dashboard():
 
     user = users_col.find_one({'_id': ObjectId(session['user_id'])})
     bookings = list(bookings_col.find({'user_id': session['user_id']}).sort([('_id', -1)]))
-    services = list(services_col.find())
+    services = list(services_col.find())  # fetch services
 
     return render_template('dashboard.html', user=user, bookings=bookings, services=services)
 

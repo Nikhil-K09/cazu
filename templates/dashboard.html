@@ -66,9 +66,8 @@
             <div class="service-grid">
                 {% for s in services %}
                     <label class="service-item">
-                        <span class="service-name">{{ s.name }}</span>
-                        <input type="checkbox" name="services" value="{{ s.name }}" onchange="toggleHighlight(this)">
-                        <span class="price-info">₹{{ s.price }} / {{ s.duration }} hr</span>
+                        <input type="checkbox" name="services" value="{{ s['name'] }}" onchange="toggleHighlight(this)">
+                        <span class="service-name">{{ s['name'] }} - ₹{{ s['price'] }} ({{ s['duration'] }} hr)</span>
                     </label>
                 {% endfor %}
             </div>
@@ -89,6 +88,7 @@
         </form>
     </div>
 </div>
+
 
 <script>
 function openBookingModal() {

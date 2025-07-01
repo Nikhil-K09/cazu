@@ -59,6 +59,14 @@
 </div>
 
 <script>
+    function toggleHighlight(checkbox) {
+    if (checkbox.checked) {
+        checkbox.closest('.service-item').classList.add('highlight');
+    } else {
+        checkbox.closest('.service-item').classList.remove('highlight');
+    }
+}
+
     function openModal() {
         document.getElementById("bookingModal").classList.remove("hidden");
     }

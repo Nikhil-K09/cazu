@@ -154,7 +154,7 @@ input, select, textarea, button {
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;
-    width: 100%;
+    width: fit-content;
 }
 
 button {
@@ -204,6 +204,7 @@ button:hover {
     display: flex;
     gap: 8px;
     align-items: center;
+    background: none;  /* ensure no background on form container */
 }
 
 .reschedule-form input[type="date"],
@@ -223,24 +224,10 @@ button:hover {
     border-radius: 6px;
     font-weight: bold;
     cursor: pointer;
+    width: fit-content;  /* make button fit its text */
 }
 
-.reschedule-form button:hover {
-    background-color: #e6b800;
-}
 
-.reschedule-form .delete-btn {
-    background-color: #e60000;
-    color: white;
-    border: none;
-    padding: 10px 5px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.reschedule-form .delete-btn:hover {
-    background-color: #ff4d4d;
-}
 
 .form-group label {
     font-weight: bold;
@@ -290,7 +277,9 @@ button:hover {
     color: #000;
     border-color: #e6b800;
 }
-
+.service-item input[type="checkbox"] {
+    display: none;
+}
 .booking-box {
     padding: 10px;
     margin: 10px 0;
@@ -300,12 +289,28 @@ button:hover {
 }
 
 
-.service-item:hover {
+.service-item:hover:not(.highlight) {
     background-color: #444;
 }
 
+
 .form-row {
     margin-bottom: 16px;
+}
+button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #ffcc00;  /* yellow */
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    
+    width: fit-content;  /* limits width to button text */
+}
+
+button[type="submit"]:hover {
+    background-color: #ffe44d;
 }
 
 input[type="date"],
