@@ -25,10 +25,10 @@
     <button class="open-modal-btn" onclick="openModal()">Book Service</button>
 </div>
 
-<!-- Modal Popup -->
+<!-- Booking Modal -->
 <div id="bookingModal" class="modal hidden">
     <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
+        <span class="close" onclick="closeBookingModal()">&times;</span>
         <h3>Select Services</h3>
         <form method="POST" action="/quick_book">
             <div class="service-grid">
@@ -38,7 +38,6 @@
                         <span class="service-name">{{ s['name'] }} - ₹{{ s['price'] }} ({{ s['duration'] }} hr)</span>
                     </label>
                 {% endfor %}
-
             </div>
 
             <div class="form-row">
@@ -48,7 +47,23 @@
 
             <div class="form-row">
                 <label>Time:</label>
-                <input type="time" name="time" min="09:00" max="17:00" required>
+                <button type="button" class="time-picker-btn" onclick="openTimePicker('quick')">Select</button>
+                <input type="hidden" name="time" id="time-value-quick" required>
+                <!-- Time picker popup for quick booking -->
+                <div id="time-picker-modal-quick" class="modal hidden">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeTimePicker('quick')">&times;</span>
+                        <h3>Select Time</h3>
+                        <div class="service-grid">
+                            {% for hour in [9,10,11,12,13,14,15,16,17,18] %}
+                                <div class="service-item" onclick="selectTime('quick', '{{ '%02d:00' % hour }}', this)">
+                                    {{ (hour <= 12) and hour or hour - 12 }} {{ (hour < 12) and 'AM' or 'PM' }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div class="form-row">
@@ -74,5 +89,30 @@
     function closeModal() {
         document.getElementById("bookingModal").classList.add("hidden");
     }
+    function openTimePicker(id) {
+    document.getElementById('time-picker-modal-' + id).classList.remove('hidden');
+}
+
+function closeTimePicker(id) {
+    document.getElementById('time-picker-modal-' + id).classList.add('hidden');
+}
+
+function selectTime(id, value, el) {
+    document.getElementById('time-value-' + id).value = value;
+    closeTimePicker(id);
+
+    // Highlight selected
+    const items = document.querySelectorAll('#time-picker-modal-' + id + ' .service-item');
+    items.forEach(item => item.classList.remove('highlight'));
+    el.classList.add('highlight');
+
+    // Update button text
+    const btn = document.querySelector(`#reschedule-${id} .time-picker-btn`) || 
+                document.querySelector(`#bookingModal .time-picker-btn`);
+    if (btn) {
+        btn.textContent = `${el.textContent}`;
+    }
+}
+
 </script>
 {% endblock %}

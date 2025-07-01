@@ -157,15 +157,9 @@ input, select, textarea, button {
     width: fit-content;
 }
 
-button {
-    background-color: #f4c430;
-    color: #000;
-    cursor: pointer;
-}
 
-button:hover {
-    background-color: #ffd700;
-}
+
+
 /* Booking Page Styling */
 .hero-section {
     text-align: center;
@@ -200,6 +194,39 @@ button:hover {
 .booking-info {
     flex: 1;
 }
+.reschedule-btn,
+.delete-btn {
+    font-weight: bold;
+    font-size: 14px;  /* or whatever size you want */
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.reschedule-btn {
+    background-color: #ffcc00;
+    color: #000;
+    border: none;
+}
+
+.reschedule-btn:hover {
+    background-color: #e6b800;
+}
+
+form .delete-btn {
+    background-color: #e60000 !important;
+    color: #fff !important;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+form .delete-btn:hover {
+    background-color: #ff4d4d !important;
+}
+
 .reschedule-form form {
     display: flex;
     gap: 8px;
@@ -234,6 +261,19 @@ button:hover {
     display: block;
     margin-bottom: 10px;
     cursor: pointer;
+}
+.time-picker-btn {
+    padding: 10px 12px;
+    background-color: #ffcc00;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #000;
+}
+
+.time-picker-btn:hover {
+    background-color: #e6b800;
 }
 
 .service-grid {
