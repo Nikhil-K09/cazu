@@ -30,40 +30,47 @@
     <div class="modal-content">
         <span class="close" onclick="closeBookingModal()">&times;</span>
         <h3>Select Services</h3>
-        <form method="POST" action="/quick_book">
+        <form method="POST" action="/quick_book" onsubmit="return validateBookingForm()">
             <div class="service-grid">
                 {% for s in services %}
-                    <label class="service-item">
-                        <input type="checkbox" name="services" value="{{ s['name'] }}" onchange="toggleHighlight(this)">
-                        <span class="service-name">{{ s['name'] }} - ₹{{ s['price'] }} ({{ s['duration'] }} hr)</span>
-                    </label>
+                <label class="service-item">
+                    <input type="checkbox" name="services" value="{{ s['name'] }}" onchange="toggleHighlight(this)">
+                    <span class="service-name">{{ s['name'] }} - ₹{{ s['price'] }} ({{ s['duration'] }} hr)</span>
+                </label>
                 {% endfor %}
             </div>
+            <p id="service-error" style="color: red; display: none;">Select a service</p>
 
             <div class="form-row">
-                <label>Date:</label>
-                <input type="date" name="date" required>
+                <button type="button" class="time-picker-btn" onclick="openDatePicker()">Select Date</button>
+                <input type="hidden" name="date" id="date-value-quick" required>
+                <div id="date-picker-modal-quick" class="modal hidden">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeDatePicker()">&times;</span>
+                        <h3>Select Date</h3>
+                        <div class="service-grid" id="date-grid-quick">
+                            <!-- JS will populate -->
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="form-row">
-                <label>Time:</label>
-                <button type="button" class="time-picker-btn" onclick="openTimePicker('quick')">Select</button>
+                <button type="button" class="time-picker-btn" onclick="openTimePicker('quick')">Select Time</button>
                 <input type="hidden" name="time" id="time-value-quick" required>
-                <!-- Time picker popup for quick booking -->
                 <div id="time-picker-modal-quick" class="modal hidden">
                     <div class="modal-content">
                         <span class="close" onclick="closeTimePicker('quick')">&times;</span>
                         <h3>Select Time</h3>
                         <div class="service-grid">
                             {% for hour in [9,10,11,12,13,14,15,16,17,18] %}
-                                <div class="service-item" onclick="selectTime('quick', '{{ '%02d:00' % hour }}', this)">
-                                    {{ (hour <= 12) and hour or hour - 12 }} {{ (hour < 12) and 'AM' or 'PM' }}
-                                </div>
+                            <div class="service-item" onclick="selectTime('quick', '{{ '%02d:00' % hour }}', this)">
+                                {{ (hour <= 12) and hour or hour - 12 }} {{ (hour < 12) and 'AM' or 'PM' }}
+                            </div>
                             {% endfor %}
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div class="form-row">
@@ -73,46 +80,4 @@
     </div>
 </div>
 
-<script>
-    function toggleHighlight(checkbox) {
-    if (checkbox.checked) {
-        checkbox.closest('.service-item').classList.add('highlight');
-    } else {
-        checkbox.closest('.service-item').classList.remove('highlight');
-    }
-}
-
-    function openModal() {
-        document.getElementById("bookingModal").classList.remove("hidden");
-    }
-
-    function closeModal() {
-        document.getElementById("bookingModal").classList.add("hidden");
-    }
-    function openTimePicker(id) {
-    document.getElementById('time-picker-modal-' + id).classList.remove('hidden');
-}
-
-function closeTimePicker(id) {
-    document.getElementById('time-picker-modal-' + id).classList.add('hidden');
-}
-
-function selectTime(id, value, el) {
-    document.getElementById('time-value-' + id).value = value;
-    closeTimePicker(id);
-
-    // Highlight selected
-    const items = document.querySelectorAll('#time-picker-modal-' + id + ' .service-item');
-    items.forEach(item => item.classList.remove('highlight'));
-    el.classList.add('highlight');
-
-    // Update button text
-    const btn = document.querySelector(`#reschedule-${id} .time-picker-btn`) || 
-                document.querySelector(`#bookingModal .time-picker-btn`);
-    if (btn) {
-        btn.textContent = `${el.textContent}`;
-    }
-}
-
-</script>
 {% endblock %}

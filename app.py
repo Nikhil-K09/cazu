@@ -66,20 +66,31 @@ def user_login():
 
     return render_template('user_login.html', error=error)
 
-# ---- USER DASHBOARD ----
+# DASBOARD------
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
         return redirect('/user_login')
+    
+    page = int(request.args.get('page', 1))
+    per_page = 5
+    skip = (page - 1) * per_page
 
-    user = users_col.find_one({'_id': ObjectId(session['user_id'])})
-    bookings = list(bookings_col.find({'user_id': session['user_id']}).sort([('_id', -1)]))
-    services = list(services_col.find())  # fetch services
+    total_bookings = bookings_col.count_documents({'user_id': str(session['user_id'])})
+    total_pages = (total_bookings + per_page - 1) // per_page
 
-    return render_template('dashboard.html', user=user, bookings=bookings, services=services)
+    bookings_cursor = bookings_col.find(
+        {'user_id': str(session['user_id'])}
+    ).sort([('date', -1), ('time', -1)]).skip(skip).limit(per_page)
+    bookings = list(bookings_cursor)
 
+    prev_page = page > 1
+    next_page = skip + per_page < total_bookings
+    
+    all_services = list(services_col.find())
 
-# ---- BOOKING ----
+    return render_template('dashboard.html', bookings=bookings, services=all_services, page=page, prev_page=prev_page, next_page=next_page,total_pages=total_pages)
+
 @app.route('/quick_book', methods=['POST'])
 def quick_book():
     if 'user_id' not in session:
@@ -97,49 +108,47 @@ def quick_book():
     if not user.get('address'):
         return redirect('/edit_profile')
 
-    insert_bookings(user, services, date, time)
-    return redirect('/dashboard')
+    # Grouped booking in one doc
+    service_details = []
+    for name in services:
+        s = services_col.find_one({'name': name})
+        if s:
+            service_details.append({
+                'name': name,
+                'price': s.get('price'),
+                'duration': s.get('duration')
+            })
 
-def insert_bookings(user, services, date, time):
-    for service_name in services:
-        service_doc = services_col.find_one({'name': service_name})
-        bookings_col.insert_one({
-            'user_id': str(user['_id']),
-            'username': user['username'],
-            'service': service_name,
-            'price': service_doc.get('price') if service_doc else None,
-            'duration': service_doc.get('duration') if service_doc else None,
-            'date': date,
-            'time': time,
-            'address': user.get('address'),
-            'phone': user.get('phone'),
-            'accepted': False,
-            'completed': False
-        })
+    bookings_col.insert_one({
+        'user_id': str(user['_id']),
+        'username': user['username'],
+        'services': [s['name'] for s in service_details],
+        'service_details': service_details,
+        'date': date,
+        'time': time,
+        'address': user.get('address'),
+        'phone': user.get('phone'),
+        'accepted': False,
+        'completed': False
+    })
 
-@app.route('/delete_booking/<id>', methods=['POST'])
-def delete_booking(id):
-    if 'user_id' not in session:
-        return redirect('/user_login')
-
-    booking = bookings_col.find_one({'_id': ObjectId(id)})
-    if booking and booking['user_id'] == session['user_id']:
-        bookings_col.delete_one({'_id': ObjectId(id)})
     return redirect('/dashboard')
 
 @app.route('/update_booking/<id>', methods=['POST'])
 def update_booking(id):
-    if 'user_id' not in session:
-        return redirect('/user_login')
+    date = request.form['date']
+    time = request.form['time']
+    
+    # Update in place, not new booking
+    bookings_col.update_one(
+        {'_id': ObjectId(id)},
+        {'$set': {'date': date, 'time': time, 'accepted': False}}  # Reset accepted
+    )
+    return redirect('/dashboard')
 
-    booking = bookings_col.find_one({'_id': ObjectId(id)})
-    if booking and not booking.get('accepted'):
-        new_date = request.form['date']
-        new_time = request.form['time']
-        bookings_col.update_one(
-            {'_id': ObjectId(id)},
-            {'$set': {'date': new_date, 'time': new_time}}
-        )
+@app.route('/delete_booking/<id>', methods=['POST'])
+def delete_booking(id):
+    bookings_col.delete_one({'_id': ObjectId(id)})
     return redirect('/dashboard')
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -197,6 +206,15 @@ def accept(id):
         {'$set': {'accepted': True}}
     )
     return redirect('/admin_dashboard')
+@app.template_filter('format_time')
+def format_time(value):
+    try:
+        from datetime import datetime
+        # parse the 24-hour time string
+        t = datetime.strptime(value, '%H:%M')
+        return t.strftime('%I:%M %p').lstrip('0')  # e.g., 3:00 PM
+    except:
+        return value  # fallback if format is unexpected
 
 @app.route('/complete/<id>', methods=['POST'])
 def complete(id):
