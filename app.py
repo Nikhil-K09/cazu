@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 from bson.objectid import ObjectId
 from utils.mongo import users_col, admins_col, bookings_col, services_col  # added services_col
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -67,11 +68,13 @@ def user_login():
     return render_template('user_login.html', error=error)
 
 # DASBOARD------
+from datetime import datetime, timedelta
+
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
         return redirect('/user_login')
-    
+
     page = int(request.args.get('page', 1))
     per_page = 5
     skip = (page - 1) * per_page
@@ -81,15 +84,21 @@ def dashboard():
 
     bookings_cursor = bookings_col.find(
         {'user_id': str(session['user_id'])}
-    ).sort([('date', -1), ('time', -1)]).skip(skip).limit(per_page)
-    bookings = list(bookings_cursor)
+    ).sort('datetime', -1).skip(skip).limit(per_page)
 
-    prev_page = page > 1
-    next_page = skip + per_page < total_bookings
-    
+    bookings = list(bookings_cursor)
     all_services = list(services_col.find())
 
-    return render_template('dashboard.html', bookings=bookings, services=all_services, page=page, prev_page=prev_page, next_page=next_page,total_pages=total_pages)
+    return render_template('dashboard.html',
+                           bookings=bookings,
+                           services=all_services,
+                           page=page,
+                           prev_page=page > 1,
+                           next_page=skip + per_page < total_bookings,
+                           total_pages=total_pages,
+                           now=datetime.now(),
+                           timedelta=timedelta)
+
 
 @app.route('/quick_book', methods=['POST'])
 def quick_book():
@@ -101,14 +110,26 @@ def quick_book():
     date = request.form['date']
     time = request.form['time']
 
-    if not services:
-        return "Please select at least one service."
-    if not date or not time:
-        return "Please select date and time."
-    if not user.get('address'):
-        return redirect('/edit_profile')
+    error = None
 
-    # Grouped booking in one doc
+    if not services:
+        error = "Please select at least one service."
+    elif not date or not time:
+        error = "Please select date and time."
+    elif not user.get('address'):
+        return redirect('/edit_profile')
+    else:
+        try:
+            selected_datetime = datetime.strptime(f"{date} {time}", "%Y-%m-%d %H:%M")
+        except ValueError:
+            error = "Invalid date or time format."
+        else:
+            if selected_datetime < datetime.now():
+                error = "Cannot book for a past time."
+
+    if error:
+        return render_dashboard_with_error(error)
+
     service_details = []
     for name in services:
         s = services_col.find_one({'name': name})
@@ -126,6 +147,7 @@ def quick_book():
         'service_details': service_details,
         'date': date,
         'time': time,
+        'datetime': selected_datetime,
         'address': user.get('address'),
         'phone': user.get('phone'),
         'accepted': False,
@@ -138,13 +160,46 @@ def quick_book():
 def update_booking(id):
     date = request.form['date']
     time = request.form['time']
+
+    try:
+        selected_datetime = datetime.strptime(f"{date} {time}", "%Y-%m-%d %H:%M")
+    except ValueError:
+        return render_dashboard_with_error("Invalid date or time format.")
     
-    # Update in place, not new booking
+    if selected_datetime < datetime.now():
+        return render_dashboard_with_error("Cannot reschedule to a past time.")
+
     bookings_col.update_one(
         {'_id': ObjectId(id)},
-        {'$set': {'date': date, 'time': time, 'accepted': False}}  # Reset accepted
+        {'$set': {
+            'date': date,
+            'time': time,
+            'datetime': selected_datetime,
+            'accepted': False
+        }}
     )
     return redirect('/dashboard')
+
+def render_dashboard_with_error(error):
+    page = 1
+    per_page = 5
+    skip = 0
+    total_bookings = bookings_col.count_documents({'user_id': str(session['user_id'])})
+    bookings_cursor = bookings_col.find(
+        {'user_id': str(session['user_id'])}
+    ).sort('datetime', -1).skip(skip).limit(per_page)
+    bookings = list(bookings_cursor)
+    all_services = list(services_col.find())
+    return render_template(
+        'dashboard.html',
+        bookings=bookings,
+        services=all_services,
+        page=page,
+        prev_page=False,
+        next_page=per_page < total_bookings,
+        total_pages=(total_bookings + per_page - 1) // per_page,
+        error=error
+    )
 
 @app.route('/delete_booking/<id>', methods=['POST'])
 def delete_booking(id):
@@ -176,14 +231,29 @@ def admin_dashboard():
     if not session.get('admin'):
         return redirect('/user_login')
 
+    page = int(request.args.get('page', 1))
+    per_page = 5
+    skip = (page - 1) * per_page
+
+    total_bookings = bookings_col.count_documents({})
+    total_pages = (total_bookings + per_page - 1) // per_page
+
+    bookings_cursor = bookings_col.find().sort([('datetime', -1)]).skip(skip).limit(per_page)
+
     bookings = []
-    for b in bookings_col.find().sort([('_id', -1)]):
-        user = users_col.find_one({'_id': ObjectId(b['user_id'])})
+    user_cache = {}
+    for b in bookings_cursor:
+        user_id = b.get('user_id')
+        if user_id not in user_cache:
+            user = users_col.find_one({'_id': ObjectId(user_id)})
+            user_cache[user_id] = user
+        else:
+            user = user_cache[user_id]
+
         booking = {
             '_id': str(b['_id']),
-            'service': b.get('service'),
-            'price': b.get('price'),
-            'duration': b.get('duration'),
+            'services': b.get('services') or ([b.get('service')] if b.get('service') else []),
+            'service_details': b.get('service_details', []),
             'date': b.get('date'),
             'time': b.get('time'),
             'accepted': b.get('accepted', False),
@@ -195,7 +265,13 @@ def admin_dashboard():
         }
         bookings.append(booking)
 
-    return render_template('admin_dashboard.html', bookings=bookings)
+    return render_template(
+        'admin_dashboard.html',
+        bookings=bookings,
+        page=page,
+        total_pages=total_pages
+    )
+
 
 @app.route('/accept/<id>', methods=['POST'])
 def accept(id):

@@ -9,6 +9,7 @@
     <button class="open-modal-btn" onclick="openBookingModal()">Book a Service</button>
 </div>
 
+{% if total_pages > 1 %}
 <div class="pagination">
   {% for p in range(1, total_pages + 1) %}
     {% if p == page %}
@@ -18,8 +19,18 @@
     {% endif %}
   {% endfor %}
 </div>
+{% endif %}
 
 
+<div id="error-modal" class="modal hidden">
+  <div class="modal-content">
+    <span class="close" onclick="closeErrorModal()">&times;</span>
+    <h3 id="error-message"></h3>
+    <div class="center-btn">
+      <button type="button" class="open-modal-btn" onclick="closeErrorModal()">OK</button>
+    </div>
+  </div>
+</div>
 
 <h3>Your Bookings:</h3>
 <div class="bookings-container">
@@ -29,13 +40,12 @@
             <div class="booking-info">
                 <p>
                     <strong>
-                        {% if b.get('services') %}
-                            {{ b['services'] | join(', ') }}
-                        {% elif b.get('service') %}
-                            {{ b['service'] }}
+                        {% if b.services %}
+                        {{ b.services | join(', ') }}
                         {% else %}
-                            Unknown Service
+                        Unknown Service
                         {% endif %}
+
                     </strong>
                     on {{ b['date'] }} at {{ b['time'] | format_time }}
 
@@ -156,4 +166,10 @@
         </form>
     </div>
 </div>
+{% if error %}
+<script>
+  showErrorModal("{{ error }}");
+</script>
+{% endif %}
+
 {% endblock %}

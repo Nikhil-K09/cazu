@@ -1,32 +1,66 @@
 {% extends "layout.html" %}
 {% block content %}
+
 <h2>Admin Dashboard</h2>
 
 <h3>All Bookings:</h3>
+
 <div class="bookings-container">
-    {% for b in bookings %}
-    <div class="booking-box">
-        <p><strong>{{ b['service'] }}</strong> for {{ b['username'] }} on {{ b['date'] }} at {{ b['time'] }}</p>
-        <p>Phone: {{ b['phone'] }} | Email: {{ b['email'] }} | Address: {{ b['address'] }}</p>
-        <p>
-            {% if b['accepted'] %}
-                ✅ Accepted
-            {% else %}
-                ❌ Pending
-                <form method="POST" action="/accept/{{ b['_id'] }}" style="display:inline;">
-                    <button type="submit">Accept</button>
-                </form>
-            {% endif %}
-            
-            {% if b['completed'] %}
-                🏁 Completed
-            {% elif b['accepted'] %}
-                <form method="POST" action="/complete/{{ b['_id'] }}" style="display:inline;">
-                    <button type="submit">Mark Complete</button>
-                </form>
-            {% endif %}
-        </p>
-    </div>
+    {% if bookings %}
+        {% for b in bookings %}
+        <div class="booking-box">
+            <p>
+                <strong>
+                    {% if b.get('services') %}
+                        {{ b['services'] | join(', ') }}
+                    {% elif b.get('service') %}
+                        {{ b['service'] }}
+                    {% else %}
+                        Unknown Service
+                    {% endif %}
+                </strong>
+                for {{ b['username'] }} on {{ b['date'] }} at {{ b['time'] | format_time }}
+            </p>
+            <p>Phone: {{ b['phone'] }} | Email: {{ b.get('email', 'N/A') }} | Address: {{ b.get('address', 'N/A') }}</p>
+
+            <div class="action-buttons">
+                <p>
+                    {% if b['accepted'] %}
+                        ✅ Accepted
+                    {% else %}
+                        ❌ Pending
+                        <form method="POST" action="/accept/{{ b['_id'] }}" style="display:inline;">
+                            <button type="submit">Accept</button>
+                        </form>
+                    {% endif %}
+                </p>
+                <p>
+                    {% if b['completed'] %}
+                        🏁 Completed
+                    {% elif b['accepted'] %}
+                        <form method="POST" action="/complete/{{ b['_id'] }}" style="display:inline;">
+                            <button type="submit">Mark Complete</button>
+                        </form>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No bookings found.</p>
+    {% endif %}
+</div>
+
+{% if total_pages > 1 %}
+<div class="pagination">
+    {% for p in range(1, total_pages + 1) %}
+        {% if p == page %}
+            <span class="current-page">{{ p }}</span>
+        {% else %}
+            <a href="{{ url_for('admin_dashboard', page=p) }}" class="page-number">{{ p }}</a>
+        {% endif %}
     {% endfor %}
 </div>
+{% endif %}
+
 {% endblock %}

@@ -309,12 +309,38 @@ form .delete-btn:hover {
 .time-picker-btn:hover {
     background-color: #bababa;
 }
+.error-text {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+}
+
 .pagination {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     gap: 8px;
     margin: 20px 0;
+}
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal.hidden {
+  display: none;
+}
+.modal-content {
+  background: #333;
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
 }
 
 .page-number {

@@ -84,3 +84,26 @@ function openDeleteModal(id) {
 function closeDeleteModal(id) {
     document.getElementById('delete-modal-' + id).classList.add('hidden');
 }
+
+function showErrorModal(message) {
+  document.getElementById('error-message').textContent = message;
+  document.getElementById('error-modal').classList.remove('hidden');
+}
+
+function closeErrorModal() {
+  document.getElementById('error-modal').classList.add('hidden');
+}
+
+function selectDate(id, value, el) {
+    document.getElementById('date-value-' + id).value = value;
+    closeDatePicker(id);
+
+    const items = document.querySelectorAll('#date-picker-modal-' + id + ' .service-item');
+    items.forEach(item => item.classList.remove('highlight'));
+    el.classList.add('highlight');
+
+    const btn = document.querySelector(`#reschedule-${id} .date-picker-btn`);
+    if (btn) {
+        btn.textContent = el.textContent;
+    }
+}

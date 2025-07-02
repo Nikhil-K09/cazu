@@ -1,6 +1,8 @@
 {% extends "layout.html" %}
 
 {% block content %}
+
+
 <div class="hero-section">
     <h2>Welcome to CAZU Services</h2>
     <p>Book doorstep car & bike cleaning services in a few clicks.</p>
@@ -22,7 +24,17 @@
 
 
 <div class="center-btn">
-    <button class="open-modal-btn" onclick="openModal()">Book Service</button>
+    <button class="open-modal-btn" onclick="openBookingModal()">Book Service</button>
+</div>
+
+<div id="error-modal" class="modal hidden">
+  <div class="modal-content">
+    <span class="close" onclick="closeErrorModal()">&times;</span>
+    <h3 id="error-message"></h3>
+    <div class="center-btn">
+      <button type="button" class="open-modal-btn" onclick="closeErrorModal()">OK</button>
+    </div>
+  </div>
 </div>
 
 <!-- Booking Modal -->
@@ -79,5 +91,10 @@
         </form>
     </div>
 </div>
+{% if error %}
+<script>
+  showErrorModal("{{ error }}");
+</script>
+{% endif %}
 
 {% endblock %}
