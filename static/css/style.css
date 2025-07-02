@@ -348,6 +348,10 @@ form .delete-btn:hover {
   font-weight: bold;
   text-align: center;
 }
+#service-error, #datetime-error, #past-error {
+  margin-top: 5px;
+  font-size: 0.9em;
+}
 
 .pagination {
     display: flex;

@@ -107,3 +107,30 @@ function selectDate(id, value, el) {
         btn.textContent = el.textContent;
     }
 }
+function validateBookingForm() {
+  document.getElementById('service-error').style.display = 'none';
+  document.getElementById('datetime-error').style.display = 'none';
+  document.getElementById('past-error').style.display = 'none';
+
+  const services = document.querySelectorAll('input[name="services"]:checked');
+  const date = document.getElementById('date-value-quick').value;
+  const time = document.getElementById('time-value-quick').value;
+
+  if (services.length === 0) {
+    document.getElementById('service-error').style.display = 'block';
+    return false;
+  }
+
+  if (!date || !time) {
+    document.getElementById('datetime-error').style.display = 'block';
+    return false;
+  }
+
+  const bookingDateTime = new Date(`${date}T${time}`);
+  if (bookingDateTime < new Date()) {
+    document.getElementById('past-error').style.display = 'block';
+    return false;
+  }
+
+  return true; // allow submit
+}
