@@ -26,6 +26,40 @@ header {
     align-items: center;
     border-bottom: 3px solid #f4c430; /* yellow */
 }
+
+.stats-container {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.stat-box {
+  background: #222;
+  border: 2px solid #ffcc00;
+  padding: 15px 25px;
+  border-radius: 12px;
+  color: #ff0;
+  text-align: center;
+}
+
+.stat-box h4 {
+  margin: 0 0 5px 0;
+  font-size: 1rem;
+}
+
+.stat-box p {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.stat-title{
+    color: white;
+}
+.stat-value{
+    color: #ffcc00 ;
+}
+
 .center-container {
     max-width: 400px;
     margin: 50px auto;

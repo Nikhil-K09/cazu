@@ -2,8 +2,18 @@
 
 {% block content %}
 <script src="{{ url_for('static', filename='scripts/dashboard.js') }}"></script>
+<div class="stats-container">
+  <div class="stat-box">
+    <h4 class="stat-title">Total Bookings</h4>
+    <p class="stat-value">{{ total_bookings }}</p>
+  </div>
+  <div class="stat-box">
+    <h4 class="stat-title">Total Spent</h4>
+    <p class="stat-value">₹{{ total_spent }}</p>
+  </div>
+</div>
 
-<h2>Welcome {{ session['username'] }}</h2>
+
 
 <div class="center-btn">
     <button class="open-modal-btn" onclick="openBookingModal()">Book a Service</button>
@@ -40,16 +50,23 @@
             <div class="booking-info">
                 <p>
                     <strong>
-                        {% if b.services %}
-                        {{ b.services | join(', ') }}
+                        {% if b.get('services') %}
+                            {{ b.services | join(', ') }}
                         {% else %}
-                        Unknown Service
+                            Unknown Service
                         {% endif %}
-
                     </strong>
                     on {{ b['date'] }} at {{ b['time'] | format_time }}
-
                 </p>
+                <p>
+                    Price: ₹
+                    {% if b.get('service_details') %}
+                        {{ b.service_details | sum(attribute='price') }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </p>
+
                 <p>
                     {% if b['accepted'] %}
                         ✅ Accepted

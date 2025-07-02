@@ -82,22 +82,28 @@ def dashboard():
     total_bookings = bookings_col.count_documents({'user_id': str(session['user_id'])})
     total_pages = (total_bookings + per_page - 1) // per_page
 
-    bookings_cursor = bookings_col.find(
-        {'user_id': str(session['user_id'])}
-    ).sort('datetime', -1).skip(skip).limit(per_page)
+    # Get paginated bookings
+    bookings_cursor = bookings_col.find({'user_id': str(session['user_id'])}).sort('datetime', -1)
+    bookings = list(bookings_cursor.skip(skip).limit(per_page))
 
-    bookings = list(bookings_cursor)
+    # Get *all* bookings (for total spent)
+    all_bookings_cursor = bookings_col.find({'user_id': str(session['user_id'])})
+    total_spent = 0
+    for b in all_bookings_cursor:
+        if b.get('service_details'):
+            total_spent += sum(s.get('price', 0) for s in b['service_details'])
+
     all_services = list(services_col.find())
 
-    return render_template('dashboard.html',
-                           bookings=bookings,
-                           services=all_services,
-                           page=page,
-                           prev_page=page > 1,
-                           next_page=skip + per_page < total_bookings,
-                           total_pages=total_pages,
-                           now=datetime.now(),
-                           timedelta=timedelta)
+    return render_template(
+        'dashboard.html',
+        bookings=bookings,
+        services=all_services,
+        total_bookings=total_bookings,
+        total_spent=total_spent,
+        page=page,
+        total_pages=total_pages
+    )
 
 
 @app.route('/quick_book', methods=['POST'])
@@ -110,25 +116,19 @@ def quick_book():
     date = request.form['date']
     time = request.form['time']
 
-    error = None
-
     if not services:
-        error = "Please select at least one service."
-    elif not date or not time:
-        error = "Please select date and time."
-    elif not user.get('address'):
+        return "Please select at least one service.", 400
+    if not date or not time:
+        return "Please select date and time.", 400
+    if not user.get('address'):
         return redirect('/edit_profile')
-    else:
-        try:
-            selected_datetime = datetime.strptime(f"{date} {time}", "%Y-%m-%d %H:%M")
-        except ValueError:
-            error = "Invalid date or time format."
-        else:
-            if selected_datetime < datetime.now():
-                error = "Cannot book for a past time."
 
-    if error:
-        return render_dashboard_with_error(error)
+    try:
+        selected_datetime = datetime.strptime(f"{date} {time}", "%Y-%m-%d %H:%M")
+    except ValueError:
+        return "Invalid date or time format.", 400
+    if selected_datetime < datetime.now():
+        return "Cannot book for a past time.", 400
 
     service_details = []
     for name in services:
@@ -136,8 +136,8 @@ def quick_book():
         if s:
             service_details.append({
                 'name': name,
-                'price': s.get('price'),
-                'duration': s.get('duration')
+                'price': s.get('price', 0),
+                'duration': s.get('duration', 0)
             })
 
     bookings_col.insert_one({
@@ -155,6 +155,7 @@ def quick_book():
     })
 
     return redirect('/dashboard')
+
 
 @app.route('/update_booking/<id>', methods=['POST'])
 def update_booking(id):
@@ -235,42 +236,37 @@ def admin_dashboard():
     per_page = 5
     skip = (page - 1) * per_page
 
-    total_bookings = bookings_col.count_documents({})
-    total_pages = (total_bookings + per_page - 1) // per_page
+    total_orders = bookings_col.count_documents({})
+    pending_orders = bookings_col.count_documents({'accepted': False})
+    completed_orders = bookings_col.count_documents({'completed': True})
 
-    bookings_cursor = bookings_col.find().sort([('datetime', -1)]).skip(skip).limit(per_page)
+    cursor = bookings_col.find().sort([('_id', -1)])
+    bookings = list(cursor.skip(skip).limit(per_page))
 
-    bookings = []
-    user_cache = {}
-    for b in bookings_cursor:
-        user_id = b.get('user_id')
-        if user_id not in user_cache:
-            user = users_col.find_one({'_id': ObjectId(user_id)})
-            user_cache[user_id] = user
-        else:
-            user = user_cache[user_id]
-
-        booking = {
-            '_id': str(b['_id']),
-            'services': b.get('services') or ([b.get('service')] if b.get('service') else []),
-            'service_details': b.get('service_details', []),
-            'date': b.get('date'),
-            'time': b.get('time'),
-            'accepted': b.get('accepted', False),
-            'completed': b.get('completed', False),
+    # Enrich bookings with user info if needed
+    enriched_bookings = []
+    for b in bookings:
+        user = users_col.find_one({'_id': ObjectId(b['user_id'])})
+        enriched_bookings.append({
+            **b,
             'username': user.get('username', 'Unknown') if user else 'Unknown',
             'phone': user.get('phone', 'N/A') if user else 'N/A',
             'email': user.get('email', 'N/A') if user else 'N/A',
             'address': user.get('address', 'Not Provided') if user else 'Not Provided'
-        }
-        bookings.append(booking)
+        })
+
+    total_pages = (total_orders + per_page - 1) // per_page
 
     return render_template(
         'admin_dashboard.html',
-        bookings=bookings,
+        bookings=enriched_bookings,
+        total_orders=total_orders,
+        pending_orders=pending_orders,
+        completed_orders=completed_orders,
         page=page,
         total_pages=total_pages
     )
+
 
 
 @app.route('/accept/<id>', methods=['POST'])

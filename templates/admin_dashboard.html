@@ -3,6 +3,35 @@
 
 <h2>Admin Dashboard</h2>
 
+<!-- STATS SECTION -->
+<div style="display: flex; gap: 20px; margin-bottom: 20px;">
+    <div style="background-color: #333; padding: 15px; border-radius: 8px; flex: 1; text-align: center;">
+        <div class="stat-title">Total Orders</div>
+        <div class="stat-value">{{ total_orders }}</div>
+    </div>
+    <div style="background-color: #333; padding: 15px; border-radius: 8px; flex: 1; text-align: center;">
+        <div class="stat-title">Pending</div>
+        <div class="stat-value">{{ pending_orders }}</div>
+    </div>
+    <div style="background-color: #333; padding: 15px; border-radius: 8px; flex: 1; text-align: center;">
+        <div class="stat-title">Completed</div>
+        <div class="stat-value">{{ completed_orders }}</div>
+    </div>
+</div>
+
+<!-- PAGINATION -->
+{% if total_pages > 1 %}
+<div class="pagination">
+    {% for p in range(1, total_pages + 1) %}
+        {% if p == page %}
+            <span class="current-page">{{ p }}</span>
+        {% else %}
+            <a href="{{ url_for('admin_dashboard', page=p) }}" class="page-number">{{ p }}</a>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+
 <h3>All Bookings:</h3>
 
 <div class="bookings-container">
@@ -21,7 +50,14 @@
                 </strong>
                 for {{ b['username'] }} on {{ b['date'] }} at {{ b['time'] | format_time }}
             </p>
-            <p>Phone: {{ b['phone'] }} | Email: {{ b.get('email', 'N/A') }} | Address: {{ b.get('address', 'N/A') }}</p>
+            <p>
+                Price: ₹{{ (b.get('service_details') or []) | sum(attribute='price') }}
+            </p>
+            <p>
+                Phone: {{ b['phone'] }} |
+                Email: {{ b.get('email', 'N/A') }} |
+                Address: {{ b.get('address', 'N/A') }}
+            </p>
 
             <div class="action-buttons">
                 <p>
@@ -50,17 +86,5 @@
         <p>No bookings found.</p>
     {% endif %}
 </div>
-
-{% if total_pages > 1 %}
-<div class="pagination">
-    {% for p in range(1, total_pages + 1) %}
-        {% if p == page %}
-            <span class="current-page">{{ p }}</span>
-        {% else %}
-            <a href="{{ url_for('admin_dashboard', page=p) }}" class="page-number">{{ p }}</a>
-        {% endif %}
-    {% endfor %}
-</div>
-{% endif %}
 
 {% endblock %}
