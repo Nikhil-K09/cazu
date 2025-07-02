@@ -51,7 +51,9 @@
                 </label>
                 {% endfor %}
             </div>
-            <p id="service-error" style="color: red; display: none;">Select a service</p>
+            <p id="service-error" style="color: red; display: none;">Please select at least one service.</p>
+            <p id="datetime-error" style="color: red; display: none;">Please select a valid date and time.</p>
+            <p id="past-error" style="color: red; display: none;">Cannot book for a past time.</p>
 
             <div class="form-row">
                 <button type="button" class="time-picker-btn" onclick="openDatePicker()">Select Date</button>
