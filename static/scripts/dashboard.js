@@ -132,5 +132,20 @@ function validateBookingForm() {
     return false;
   }
 
-  return true; // allow submit
+  return true; 
 }
+
+
+function toggleDropdown(id) {
+    const dropdown = document.getElementById(id);
+    document.querySelectorAll('.dropdown-content').forEach(el => {
+        if (el !== dropdown) el.style.display = 'none';
+    });
+    dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+}
+
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-content').forEach(el => el.style.display = 'none');
+    }
+});

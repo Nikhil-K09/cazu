@@ -628,10 +628,11 @@ nav a {
     position: relative;
     display: inline-block;
 }
+
 .dropdown-content {
     display: none;
     position: absolute;
-    top: 100%;  /* directly below the trigger */
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
     background-color: #333;
@@ -639,26 +640,25 @@ nav a {
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
     z-index: 1;
     border-radius: 4px;
-    
 }
 
 .dropdown-content a {
     color: #f4c430;
-    padding:7px ;
+    padding: 7px;
     text-decoration: none;
     display: block;
 }
+
 .dropdown-content a:hover {
     background-color: #444;
 }
-.dropdown:hover .dropdown-content {
-    display: block;
-}
+
 .dropdown span {
     cursor: pointer;
     color: #f4c430;
     font-weight: bold;
 }
+
 .services-section {
     max-width: 900px;
     margin: 40px auto;

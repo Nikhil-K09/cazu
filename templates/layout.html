@@ -16,12 +16,12 @@
         <nav>
             <a href="/">Home</a>
             
-            {% if session.get('user_id') %}
+{% if session.get('user_id') %}
                 <a href="/dashboard">Bookings</a>
-                
+
                 <div class="dropdown">
-                    <span class="dropdown-trigger">{{ session['username'] }}</span>
-                    <div class="dropdown-content">
+                    <span class="dropdown-trigger" onclick="toggleDropdown('userDropdown')">{{ session['username'] }}</span>
+                    <div class="dropdown-content" id="userDropdown">
                         <a href="/edit_profile" class="dropdown-text">Edit Profile</a>
                         <a href="/logout" class="dropdown-text">Logout</a>
                     </div>
@@ -31,8 +31,8 @@
                 <a href="/admin_dashboard">Dashboard</a>
 
                 <div class="dropdown">
-                    <span class="dropdown-trigger">{{ session.get('admin_name', 'Admin') }}</span>
-                    <div class="dropdown-content">
+                    <span class="dropdown-trigger" onclick="toggleDropdown('adminDropdown')">{{ session.get('admin_name', 'Admin') }}</span>
+                    <div class="dropdown-content" id="adminDropdown">
                         <a href="/logout" class="dropdown-text">Logout</a>
                     </div>
                 </div>
